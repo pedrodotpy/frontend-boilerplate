@@ -1,0 +1,14 @@
+FROM mcr.microsoft.com/playwright:v1.62.1-jammy
+
+RUN corepack enable
+
+WORKDIR /app
+
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+
+COPY . .
+RUN chmod +x /app/docker/entrypoint.sh
+
+ENTRYPOINT ["/app/docker/entrypoint.sh"]
+CMD ["yarn", "test:e2e"]

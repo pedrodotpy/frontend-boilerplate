@@ -1,0 +1,14 @@
+node_modules
+dist
+dist-ssr
+.git
+.cursor
+.env
+test-results
+playwright-report
+blob-report
+playwright/.cache
+.idea
+.vscode
+.DS_Store
+*.log

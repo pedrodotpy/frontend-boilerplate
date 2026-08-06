@@ -1,0 +1,55 @@
+include:
+  - path: ../django-boilerplate/docker-compose.yml
+
+services:
+  frontend:
+    build: .
+    volumes:
+      - .:/app
+      - frontend_node_modules:/app/node_modules
+      - ../django-boilerplate:/django-boilerplate:ro
+    environment:
+      VITE_API_BASE_URL: http://backend:8000
+      OPENAPI_SCHEMA_PATH: /django-boilerplate/schema.yml
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:5173').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+    depends_on:
+      backend:
+        condition: service_started
+
+  playwright:
+    build:
+      context: .
+      dockerfile: Dockerfile.playwright
+    volumes:
+      - .:/app
+      - playwright_node_modules:/app/node_modules
+    environment:
+      CI: "1"
+      PLAYWRIGHT_BASE_URL: http://frontend:5173
+      PLAYWRIGHT_SKIP_WEBSERVER: "1"
+      VITE_API_BASE_URL: http://backend:8000
+      E2E_DATABASE_URL: postgres://postgres:postgres@db:5432/app
+      E2E_LOGIN_2FA: ${E2E_LOGIN_2FA:-}
+    depends_on:
+      db:
+        condition: service_healthy
+      backend:
+        condition: service_started
+      frontend:
+        condition: service_healthy
+    working_dir: /app
+
+volumes:
+  frontend_node_modules:
+  playwright_node_modules:

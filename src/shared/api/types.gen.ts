@@ -4,6 +4,23 @@ export type ClientOptions = {
     baseURL: `${string}://${string}` | (string & {});
 };
 
+export type ChallengeRequired = {
+    challenge_id: string;
+    destination: string;
+};
+
+/**
+ * Authenticate with email + password; optionally defer JWT for 2FA.
+ */
+export type EmailTokenObtain = {
+    email: string;
+    password: string;
+};
+
+export type ForgotPassword = {
+    email: string;
+};
+
 export type Logout = {
     refresh: string;
 };
@@ -34,11 +51,18 @@ export type PatchedUserUpdate = {
     is_staff?: boolean;
 };
 
-export type TokenObtainPair = {
+export type ResendCode = {
+    challenge_id: string;
+};
+
+export type ResetPassword = {
     email: string;
-    password: string;
-    readonly access: string;
-    readonly refresh: string;
+    code: string;
+};
+
+export type TokenPair = {
+    access: string;
+    refresh: string;
 };
 
 export type TokenRefresh = {
@@ -94,6 +118,11 @@ export type UserUpdate = {
     is_staff?: boolean;
 };
 
+export type VerifyCode = {
+    challenge_id: string;
+    code: string;
+};
+
 export type MeWritable = {
     email: string;
 };
@@ -116,6 +145,13 @@ export type PatchedUserUpdateWritable = {
      * Designates whether the user can log into the admin site.
      */
     is_staff?: boolean;
+};
+
+export type ResetPasswordWritable = {
+    email: string;
+    code: string;
+    new_password: string;
+    confirm_password: string;
 };
 
 export type TokenRefreshWritable = {
@@ -160,6 +196,22 @@ export type UserUpdateWritable = {
     is_staff?: boolean;
 };
 
+export type AuthForgotPasswordCreateData = {
+    body: ForgotPassword;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/forgot-password/';
+};
+
+export type AuthForgotPasswordCreateResponses = {
+    /**
+     * Always empty (anti-enumeration).
+     */
+    204: void;
+};
+
+export type AuthForgotPasswordCreateResponse = AuthForgotPasswordCreateResponses[keyof AuthForgotPasswordCreateResponses];
+
 export type AuthLogoutCreateData = {
     body: Logout;
     path?: never;
@@ -186,15 +238,51 @@ export type AuthMeRetrieveResponses = {
 
 export type AuthMeRetrieveResponse = AuthMeRetrieveResponses[keyof AuthMeRetrieveResponses];
 
+export type AuthResendCodeCreateData = {
+    body: ResendCode;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/resend-code/';
+};
+
+export type AuthResendCodeCreateResponses = {
+    200: ChallengeRequired;
+};
+
+export type AuthResendCodeCreateResponse = AuthResendCodeCreateResponses[keyof AuthResendCodeCreateResponses];
+
+export type AuthResetPasswordCreateData = {
+    body: ResetPasswordWritable;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/reset-password/';
+};
+
+export type AuthResetPasswordCreateResponses = {
+    /**
+     * Password updated.
+     */
+    204: void;
+};
+
+export type AuthResetPasswordCreateResponse = AuthResetPasswordCreateResponses[keyof AuthResetPasswordCreateResponses];
+
 export type AuthTokenCreateData = {
-    body: TokenObtainPair;
+    body: EmailTokenObtain;
     path?: never;
     query?: never;
     url: '/api/v1/auth/token/';
 };
 
 export type AuthTokenCreateResponses = {
-    200: TokenObtainPair;
+    /**
+     * JWT pair when LOGIN_2FA_ENABLED is false.
+     */
+    200: TokenPair;
+    /**
+     * 2FA challenge when LOGIN_2FA_ENABLED is true.
+     */
+    202: ChallengeRequired;
 };
 
 export type AuthTokenCreateResponse = AuthTokenCreateResponses[keyof AuthTokenCreateResponses];
@@ -211,6 +299,19 @@ export type AuthTokenRefreshCreateResponses = {
 };
 
 export type AuthTokenRefreshCreateResponse = AuthTokenRefreshCreateResponses[keyof AuthTokenRefreshCreateResponses];
+
+export type AuthVerifyCodeCreateData = {
+    body: VerifyCode;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/verify-code/';
+};
+
+export type AuthVerifyCodeCreateResponses = {
+    200: TokenPair;
+};
+
+export type AuthVerifyCodeCreateResponse = AuthVerifyCodeCreateResponses[keyof AuthVerifyCodeCreateResponses];
 
 export type UsersListData = {
     body?: never;

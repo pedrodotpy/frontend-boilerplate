@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AuthLogoutCreateData, AuthLogoutCreateResponses, AuthMeRetrieveData, AuthMeRetrieveResponses, AuthTokenCreateData, AuthTokenCreateResponses, AuthTokenRefreshCreateData, AuthTokenRefreshCreateResponses, UsersCreateData, UsersCreateResponses, UsersDestroyData, UsersDestroyResponses, UsersListData, UsersListResponses, UsersPartialUpdateData, UsersPartialUpdateResponses, UsersRetrieveData, UsersRetrieveResponses, UsersUpdateData, UsersUpdateResponses } from './types.gen';
+import type { AuthForgotPasswordCreateData, AuthForgotPasswordCreateResponses, AuthLogoutCreateData, AuthLogoutCreateResponses, AuthMeRetrieveData, AuthMeRetrieveResponses, AuthResendCodeCreateData, AuthResendCodeCreateResponses, AuthResetPasswordCreateData, AuthResetPasswordCreateResponses, AuthTokenCreateData, AuthTokenCreateResponses, AuthTokenRefreshCreateData, AuthTokenRefreshCreateResponses, AuthVerifyCodeCreateData, AuthVerifyCodeCreateResponses, UsersCreateData, UsersCreateResponses, UsersDestroyData, UsersDestroyResponses, UsersListData, UsersListResponses, UsersPartialUpdateData, UsersPartialUpdateResponses, UsersRetrieveData, UsersRetrieveResponses, UsersUpdateData, UsersUpdateResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -17,6 +17,16 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
      */
     meta?: keyof ClientMeta extends never ? Record<string, unknown> : ClientMeta;
 };
+
+export const authForgotPasswordCreate = <ThrowOnError extends boolean = false>(options: Options<AuthForgotPasswordCreateData, ThrowOnError>): RequestResult<AuthForgotPasswordCreateResponses, unknown, ThrowOnError> => (options.client ?? client).post<AuthForgotPasswordCreateResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/auth/forgot-password/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 export const authLogoutCreate = <ThrowOnError extends boolean = false>(options: Options<AuthLogoutCreateData, ThrowOnError>): RequestResult<AuthLogoutCreateResponses, unknown, ThrowOnError> => (options.client ?? client).post<AuthLogoutCreateResponses, unknown, ThrowOnError>({
     responseType: 'json',
@@ -36,8 +46,29 @@ export const authMeRetrieve = <ThrowOnError extends boolean = false>(options?: O
     ...options
 });
 
+export const authResendCodeCreate = <ThrowOnError extends boolean = false>(options: Options<AuthResendCodeCreateData, ThrowOnError>): RequestResult<AuthResendCodeCreateResponses, unknown, ThrowOnError> => (options.client ?? client).post<AuthResendCodeCreateResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/auth/resend-code/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+export const authResetPasswordCreate = <ThrowOnError extends boolean = false>(options: Options<AuthResetPasswordCreateData, ThrowOnError>): RequestResult<AuthResetPasswordCreateResponses, unknown, ThrowOnError> => (options.client ?? client).post<AuthResetPasswordCreateResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/auth/reset-password/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
 /**
- * JWT obtain using email + password (USERNAME_FIELD=email).
+ * JWT obtain using email + password. May return a 2FA challenge instead.
  */
 export const authTokenCreate = <ThrowOnError extends boolean = false>(options: Options<AuthTokenCreateData, ThrowOnError>): RequestResult<AuthTokenCreateResponses, unknown, ThrowOnError> => (options.client ?? client).post<AuthTokenCreateResponses, unknown, ThrowOnError>({
     responseType: 'json',
@@ -56,6 +87,17 @@ export const authTokenCreate = <ThrowOnError extends boolean = false>(options: O
 export const authTokenRefreshCreate = <ThrowOnError extends boolean = false>(options: Options<AuthTokenRefreshCreateData, ThrowOnError>): RequestResult<AuthTokenRefreshCreateResponses, unknown, ThrowOnError> => (options.client ?? client).post<AuthTokenRefreshCreateResponses, unknown, ThrowOnError>({
     responseType: 'json',
     url: '/api/v1/auth/token/refresh/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+export const authVerifyCodeCreate = <ThrowOnError extends boolean = false>(options: Options<AuthVerifyCodeCreateData, ThrowOnError>): RequestResult<AuthVerifyCodeCreateResponses, unknown, ThrowOnError> => (options.client ?? client).post<AuthVerifyCodeCreateResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/auth/verify-code/',
     ...options,
     headers: {
         'Content-Type': 'application/json',
